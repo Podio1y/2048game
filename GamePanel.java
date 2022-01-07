@@ -15,7 +15,7 @@ public class GamePanel extends JPanel implements ActionListener{
 	Random r;
 	int units = 4;
 	int [][] board = new int [units][units];
-	Font tileFont = new Font("Verdana", Font.BOLD, 20);
+	Font tileFont = new Font("Verdana", Font.BOLD, screenWidth/15);
 	
 	GamePanel(){
 		r = new Random();
@@ -273,6 +273,17 @@ public class GamePanel extends JPanel implements ActionListener{
 		}
 	}
 
+	public int getExponent(int value){
+		int exponent = 0;
+
+		while (value != 1){
+			value/=2;
+			exponent++;
+		}
+
+		return exponent;
+	}
+
 	public void drawTile(int x, int y, int value, Graphics g){
 		int xcoord = (16 + (4-units)) + x * (screenWidth/units) - (x+1)*(10/(units-1));
 		int widthCap = (x+1) * (screenWidth/units) - (x+2)*(10/(units-1));
@@ -280,12 +291,26 @@ public class GamePanel extends JPanel implements ActionListener{
 		int ycoord = (16 + (4-units)) + y * (screenWidth/units) - (y+1)*(10/(units-1));
 		int heightCap = (y+1) * (screenWidth/units) - (y+2)*(10/(units-1));
 
-		g.setColor(Color.RED);
+		int exponent = getExponent(value);
+
+		if (value <= 32){
+			Color tile = new Color(255,255 - 26*exponent,255 - 51*exponent);
+			g.setColor(tile);
+		}
+		else if (value <= 128 && value >= 64){
+			Color tile = new Color(255,255 - 26*exponent,0);
+			g.setColor(tile);
+		}
+		else{
+			Color tile = new Color(255,255 - 26*exponent,255 - 26*exponent);
+			g.setColor(tile);
+		}
+		
 		g.fillRect(xcoord, ycoord, widthCap - xcoord, heightCap - ycoord);
 
 		g.setColor(Color.BLUE);
 		g.setFont(tileFont);
-		g.drawString("" + value, xcoord + (widthCap - xcoord)/2, ycoord + (heightCap - ycoord)/2);
+		g.drawString("" + value, (xcoord + (widthCap - xcoord)/2) - (screenWidth/units)/units, ycoord + (heightCap - ycoord)/2);
 	}
 	
 	@Override
